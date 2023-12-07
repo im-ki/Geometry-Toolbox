@@ -218,8 +218,6 @@ def compute_curvature(vert, face):
             Tv[:, x, y] = perform_mesh_smoothing(face, vert, Tv[:, x, y]).reshape(-1)
 
     # extract eigenvectors and eigenvalues
-    U = np.zeros((Nv, 3, 3))
-    D = np.zeros((Nv, 3))
     val, vec = np.linalg.eig(Tv)
     ind = np.argsort(np.abs(val), axis = 1)
     D = np.take_along_axis(val, ind, axis = 1)
