@@ -14,6 +14,8 @@ def generalized_laplacian2D(face, vertex, mu):#, h, w):
         abc : vectors containing the coefficients alpha, beta and gamma (m, 3)
         area : float, area of every triangles in the mesh
     """
+    if mu.ndim == 1:
+        mu = mu.reshape((-1, 1))
     af = (1 - 2 * np.real(mu) + np.abs(mu)**2) / (1 - np.abs(mu)**2)
     bf = -2 * np.imag(mu) / (1 - np.abs(mu)**2)
     gf = (1 + 2 * np.real(mu) + np.abs(mu)**2) / (1 - np.abs(mu)**2)
