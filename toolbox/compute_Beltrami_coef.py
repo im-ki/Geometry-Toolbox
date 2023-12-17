@@ -5,6 +5,8 @@ def beltrami_coefficient(v, f, mapping):
     # f : nf * 3 matrix
     # v : nv * 2 matrix
     # mapping : nv * 3 matrix
+    # (u, v) -> (X, Y, Z)
+
 
     nf = f.shape[0]
     nv = v.shape[0]
@@ -23,8 +25,8 @@ def beltrami_coefficient(v, f, mapping):
     My = np.stack((e1[:, 0], e2[:, 0], e3[:, 0])) / area / 2
     My = -My.T.reshape(-1)
 
-    Dx = sps.csr_matrix((Mx, (Mi, Mj)), shape=(nf, nv))
-    Dy = sps.csr_matrix((My, (Mi, Mj)), shape=(nf, nv))
+    Dx = sps.csr_matrix((Mx, (Mi, Mj)), shape=(nf, nv)) # d/du
+    Dy = sps.csr_matrix((My, (Mi, Mj)), shape=(nf, nv)) # d/dv
 
     dXdu = Dx.dot(mapping[:, 0])
     dXdv = Dy.dot(mapping[:, 0])
@@ -33,9 +35,9 @@ def beltrami_coefficient(v, f, mapping):
     dZdu = Dx.dot(mapping[:, 2])
     dZdv = Dy.dot(mapping[:, 2])
 
-    E = dXdu**2 + dYdu**2 + dZdu**2
-    G = dXdv**2 + dYdv**2 + dZdv**2
-    F = dXdu*dXdv + dYdu*dYdv + dZdu*dZdv
-    mu = (E - G + 2 * 1j * F) / (E + G + 2*np.sqrt(E*G - F**2))
+    E = dXdu**2 + dYdu**2 + dZdu**2 # The square of the norm of d(mapping)/du 
+    G = dXdv**2 + dYdv**2 + dZdv**2 # The square of the norm of d(mapping)/dv
+    F = dXdu*dXdv + dYdu*dYdv + dZdu*dZdv # The dot product of the d(mapping)/du and d(mapping)/dv
+    mu = (E - G + 2 * 1j * F) / (E + G + 2*np.sqrt(E*G - F**2)) # np.sqrt(E*G - F**2) represent the cross product of d(mapping)/du and d(mapping)/dv, representing the change of area
 
     return mu.reshape((-1, 1))
